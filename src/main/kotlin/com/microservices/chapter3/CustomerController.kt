@@ -1,5 +1,6 @@
 package com.microservices.chapter3
 
+import org.apache.coyote.Response
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -11,10 +12,13 @@ class CustomerController {
     private lateinit var customerService: CustomerService
 
     @GetMapping(value=["/customer/{id}"])
-    fun getCustomer(@PathVariable id: Int): ResponseEntity<Customer?> {
+    fun getCustomer(@PathVariable id: Int): ResponseEntity<Any> {
         val customer = customerService.getCustomer(id)
-        val status = if(customer == null) HttpStatus.NOT_FOUND else HttpStatus.OK
-        return ResponseEntity(customer,status)
+        return if (customer != null)
+            ResponseEntity(customer, HttpStatus.OK)
+        else
+            ResponseEntity(ErrorResponse("Customer Not Found","customer '$id' not found"),
+            HttpStatus.NOT_FOUND) //ErrorHandler,Response 생성 없이 처리 하는 로직
     }
 
     @PostMapping(value=["/customer/"])

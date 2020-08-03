@@ -1,4 +1,3 @@
 package com.microservices.chapter3
 
-class ErrorResponse {
-}
+data class ErrorResponse(val error: String, val message: String)
